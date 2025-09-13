@@ -1,13 +1,14 @@
 package com.example.placement.dto;
 
 import lombok.*;
+import java.time.OffsetDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ApplicationDTO {
     private Long id;
-    private Long studentId;
-    private Long driveId;
+    private String studentName;   // Change from Long studentId to String studentName
     private String status;
+    private OffsetDateTime appliedAt;
 }

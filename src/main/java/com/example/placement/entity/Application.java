@@ -14,15 +14,16 @@ public class Application {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name="student_id")
+    @ManyToOne(fetch = FetchType.EAGER)  // Add eager fetch here
+    @JoinColumn(name = "student_id")
     private Student student;
 
-    @ManyToOne
-    @JoinColumn(name="drive_id")
+    @ManyToOne(fetch = FetchType.EAGER)  // Also eager for drive to avoid lazy issues
+    @JoinColumn(name = "drive_id")
     private Drive drive;
 
     private String status; // APPLIED, SHORTLISTED, SELECTED, REJECTED
 
     private OffsetDateTime appliedAt;
 }
+
