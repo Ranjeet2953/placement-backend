@@ -6,6 +6,7 @@ import com.example.placement.repository.StudentRepository;
 import com.example.placement.service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 @Service
@@ -39,5 +40,10 @@ public class StudentServiceImpl implements StudentService {
         Student s = opt.get();
         s.setResumePath(path);
         studentRepository.save(s);
+    }
+
+    @Override
+    public void delete(Student student) {
+        studentRepository.delete(student);
     }
 }

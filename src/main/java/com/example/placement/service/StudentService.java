@@ -8,4 +8,5 @@ public interface StudentService {
     Student findByUser(User user);
     Student update(Student student);
     void updateResumePath(Long studentId, String path);
+    void delete(Student student);    // Added delete method
 }
