@@ -11,7 +11,7 @@ import java.util.*;
 public class DriveServiceImpl implements DriveService {
 
     @Autowired private DriveRepository driveRepository;
-    
+
     @Override
     public Drive create(Drive drive) {
         return driveRepository.save(drive);
@@ -27,4 +27,14 @@ public class DriveServiceImpl implements DriveService {
         return driveRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Drive not found"));
     }
+
+    @Override
+    public Drive update(Drive drive) {
+        // You can optionally verify the drive exists before saving
+        if (drive.getId() == null || !driveRepository.existsById(drive.getId())) {
+            throw new RuntimeException("Drive not found for update");
+        }
+        return driveRepository.save(drive);
+    }
 }
+

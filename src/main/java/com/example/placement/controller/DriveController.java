@@ -35,6 +35,19 @@ public class DriveController {
         return ResponseEntity.ok(list);
     }
 
+    // New API to fetch a single Drive by ID
+    @GetMapping("/{id}")
+    public ResponseEntity<DriveDTO> getDriveById(@PathVariable Long id) {
+        Drive drive = null;
+        try {
+            drive = driveService.findById(id);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+        DriveDTO dto = new DriveDTO(drive.getId(), drive.getCompanyName(), drive.getJd(), drive.getDateOfDrive(), drive.getLocation());
+        return ResponseEntity.ok(dto);
+    }
+
     @PostMapping
     public ResponseEntity<DriveDTO> createDrive(@RequestBody DriveDTO dto, java.security.Principal principal) {
         Drive d = new Drive();
@@ -63,5 +76,22 @@ public class DriveController {
         application.setAppliedAt(OffsetDateTime.now());
         applicationRepository.save(application);
         return ResponseEntity.ok(Map.of("status","applied"));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<DriveDTO> updateDrive(@PathVariable Long id, @RequestBody DriveDTO dto) {
+        Drive drive = null;
+        try {
+            drive = driveService.findById(id);
+        } catch (RuntimeException e) {
+            return ResponseEntity.notFound().build();
+        }
+        drive.setCompanyName(dto.getCompanyName());
+        drive.setJd(dto.getJd());
+        drive.setDateOfDrive(dto.getDateOfDrive());
+        drive.setLocation(dto.getLocation());
+        driveService.update(drive);
+        dto.setId(drive.getId());
+        return ResponseEntity.ok(dto);
     }
 }
