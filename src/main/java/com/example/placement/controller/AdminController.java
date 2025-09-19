@@ -38,8 +38,10 @@ public class AdminController {
                 app.getId(),
                 app.getStudent() != null ? app.getStudent().getFullName() : "Unknown",
                 app.getStatus(),
+                app.getDrive() != null ? app.getDrive().getCompanyName() : "Unknown",
                 app.getAppliedAt()
         )).collect(Collectors.toList());
+
     }
 
     @DeleteMapping("/users/{id}")

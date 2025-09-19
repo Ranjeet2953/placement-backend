@@ -1,4 +1,5 @@
 package com.example.placement.controller;
+import com.example.placement.dto.ApplicationDTO;
 import com.example.placement.dto.StudentDTO;
 import com.example.placement.entity.Application;
 import com.example.placement.entity.Student;
@@ -16,6 +17,7 @@ import java.nio.file.*;
 import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/student")
@@ -66,13 +68,25 @@ public class StudentController {
         return ResponseEntity.ok().body(Map.of("path", target.toAbsolutePath().toString()));
     }
     @GetMapping("/applications")
-    public ResponseEntity<?> getMyApplications(java.security.Principal principal) {
-        User u = userService.findByUsername(principal.getName());
-        Student s = studentService.findByUser(u);
-        List<Application> applications = applicationRepository.findByStudent(s);
-        // Optionally map to DTO if needed
-        return ResponseEntity.ok(applications);
+    public ResponseEntity<List<ApplicationDTO>> getApplications(Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        Student student = studentService.findByUser(user);
+
+        List<Application> apps = applicationRepository.findByStudent(student);
+
+        List<ApplicationDTO> dtos = apps.stream()
+            .map(app -> new ApplicationDTO(
+                app.getId(),
+                student != null && student.getFullName() != null ? student.getFullName() : "[UNKNOWN]", // studentName
+                app.getStatus(), // status
+                app.getDrive() != null && app.getDrive().getCompanyName() != null ? app.getDrive().getCompanyName() : "[UNKNOWN]", // companyName
+                app.getAppliedAt() // appliedAt
+            ))
+            .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
+
     
   
 }

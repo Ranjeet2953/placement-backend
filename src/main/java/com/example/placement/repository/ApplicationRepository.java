@@ -1,6 +1,7 @@
 package com.example.placement.repository;
 
 import com.example.placement.entity.Application;
+import com.example.placement.entity.Drive;
 import com.example.placement.entity.Student;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,8 +15,12 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     List<Application> findByStudent(Student student);
     List<Application> findByDriveId(Long driveId);
 
+    long countByStudentId(Long studentId);
+    long countByStudentIdAndStatus(Long studentId, String status);
     @Modifying
     @Transactional
     @Query("DELETE FROM Application a WHERE a.student.id = :studentId")
     void deleteByStudentId(@Param("studentId") Long studentId);
+    boolean existsByStudentAndDrive(Student student, Drive drive);
+  String findByStudentAndDrive(Student student, Drive d);
 }

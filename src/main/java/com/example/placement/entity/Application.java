@@ -25,5 +25,9 @@ public class Application {
     private String status; // APPLIED, SHORTLISTED, SELECTED, REJECTED
 
     private OffsetDateTime appliedAt;
+    public void setAppliedAt(OffsetDateTime offsetDateTime) {
+        // TODO Auto-generated method stub
+        
+      }
 }
 
