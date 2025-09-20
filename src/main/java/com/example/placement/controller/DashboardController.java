@@ -237,33 +237,52 @@ public class DashboardController {
     
     
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getDashboardStats(Principal principal) {
+    public ResponseEntity<DashboardStatsDTO> getDashboardStats1(Principal principal) {
         User user = userService.findByUsername(principal.getName());
         Student student = studentService.findByUser(user);
+        Long studentId = student.getId();
 
-        int availableDrives = (int) driveService.listAll().stream()
-            .filter(d -> d.getDateOfDrive().isAfter(LocalDate.now()))
-            .filter(d -> applicationRepository.findByStudentAndDrive(student, d).isEmpty())
-            .count();
+        // Calculate stats
+        int totalDrives = driveRepo.countAllDrives();
+        int totalApplied = applicationRepo.countApplicationsByStudentId(studentId);
+        int skillsCount = getSkillsCountForStudent(studentId);
+        int profileCompletion = calculateProfileCompletion(studentId);
 
-        int applicationsCount = applicationRepository.findByStudent(student).size();
-        int interviewCount = interviewRepository.findByStudent(student).size();
-        int acceptedCount = (int) applicationRepository.findByStudent(student).stream()
-                .filter(app -> "ACCEPTED".equalsIgnoreCase(app.getStatus()))
-                .count();
+        System.out.println("Dashboard Stats for studentId=" + studentId);
+        System.out.println("totalDrives=" + totalDrives);
+        System.out.println("totalApplied=" + totalApplied);
+        System.out.println("skillsCount=" + skillsCount);
+        System.out.println("profileCompletion=" + profileCompletion);
 
-        Map<String, Object> stats = new HashMap<>();
-        stats.put("availableDrives", availableDrives);
-        stats.put("applicationsCount", applicationsCount);
-        stats.put("interviewCount", interviewCount);
-        stats.put("acceptedCount", acceptedCount);
+        // build DTO
+        DashboardStatsDTO dto = new DashboardStatsDTO();
+        dto.setTotalDrives(totalDrives);
+        dto.setApplicationsCount(totalApplied);
+        dto.setSkillsCount(skillsCount);
+        dto.setProfileCompletion(profileCompletion);
 
-        
-        System.out.println("availableDrives: " + availableDrives);
-        System.out.println("applicationsCount: " + applicationsCount);
-        System.out.println("interviewCount: " + interviewCount);
-        System.out.println("acceptedCount: " + acceptedCount);
+        return ResponseEntity.ok(dto);
+    }
 
-        return ResponseEntity.ok(stats);
+    // Placeholder dummy methods
+    private int getSkillsCountForStudent(Long studentId) {
+        // TODO: Implement actual skill count logic
+        return 5; // example static value
+    }
+
+    private int calculateProfileCompletion(Long studentId) {
+        // TODO: Implement actual profile completion calculation
+        return 75; // example static value in percentage
+    }
+    
+    @GetMapping("/applied-drives/ids")
+    public ResponseEntity<List<Long>> getAppliedDriveIds(Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        Student student = studentService.findByUser(user);
+        List<Application> applications = applicationRepository.findByStudent(student);
+        List<Long> appliedDriveIds = applications.stream()
+                .map(a -> a.getDrive().getId())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(appliedDriveIds);
     }
 }

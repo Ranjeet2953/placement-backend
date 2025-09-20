@@ -23,4 +23,6 @@ public interface ApplicationRepository extends JpaRepository<Application, Long> 
     void deleteByStudentId(@Param("studentId") Long studentId);
     boolean existsByStudentAndDrive(Student student, Drive drive);
   String findByStudentAndDrive(Student student, Drive d);
+  @Query("SELECT COUNT(a) FROM Application a WHERE a.student.id = :studentId")
+  int countApplicationsByStudentId(@Param("studentId") Long studentId);
 }

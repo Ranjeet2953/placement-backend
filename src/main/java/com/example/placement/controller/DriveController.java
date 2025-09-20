@@ -122,5 +122,15 @@ public class DriveController {
         dto.setId(drive.getId());
         return ResponseEntity.ok(dto);
     }
+    @GetMapping("/applied-drives/ids")
+    public ResponseEntity<List<Long>> getAppliedDriveIds(Principal principal) {
+        User user = userService.findByUsername(principal.getName());
+        Student student = studentService.findByUser(user);
+        List<Application> applications = applicationRepository.findByStudent(student);
+        List<Long> appliedDriveIds = applications.stream()
+                .map(a -> a.getDrive().getId())
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(appliedDriveIds);
+    }
 
 }
